@@ -16,7 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$Task {
-  int get id => throw _privateConstructorUsedError;
+  int? get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
   DateTime get dueDate => throw _privateConstructorUsedError;
@@ -35,7 +35,7 @@ abstract class $TaskCopyWith<$Res> {
       _$TaskCopyWithImpl<$Res, Task>;
   @useResult
   $Res call(
-      {int id,
+      {int? id,
       String name,
       String description,
       DateTime dueDate,
@@ -58,7 +58,7 @@ class _$TaskCopyWithImpl<$Res, $Val extends Task>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? name = null,
     Object? description = null,
     Object? dueDate = null,
@@ -66,10 +66,10 @@ class _$TaskCopyWithImpl<$Res, $Val extends Task>
     Object? isCompleted = null,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -102,7 +102,7 @@ abstract class _$$TaskImplCopyWith<$Res> implements $TaskCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {int id,
+      {int? id,
       String name,
       String description,
       DateTime dueDate,
@@ -122,7 +122,7 @@ class __$$TaskImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? name = null,
     Object? description = null,
     Object? dueDate = null,
@@ -130,10 +130,10 @@ class __$$TaskImplCopyWithImpl<$Res>
     Object? isCompleted = null,
   }) {
     return _then(_$TaskImpl(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -162,7 +162,7 @@ class __$$TaskImplCopyWithImpl<$Res>
 
 class _$TaskImpl implements _Task {
   const _$TaskImpl(
-      {required this.id,
+      {this.id,
       required this.name,
       required this.description,
       required this.dueDate,
@@ -171,7 +171,7 @@ class _$TaskImpl implements _Task {
       : _tags = tags;
 
   @override
-  final int id;
+  final int? id;
   @override
   final String name;
   @override
@@ -224,7 +224,7 @@ class _$TaskImpl implements _Task {
 
 abstract class _Task implements Task {
   const factory _Task(
-      {required final int id,
+      {final int? id,
       required final String name,
       required final String description,
       required final DateTime dueDate,
@@ -232,7 +232,7 @@ abstract class _Task implements Task {
       required final bool isCompleted}) = _$TaskImpl;
 
   @override
-  int get id;
+  int? get id;
   @override
   String get name;
   @override

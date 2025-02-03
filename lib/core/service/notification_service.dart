@@ -77,7 +77,7 @@ class NotificationService {
     );
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      task.id,
+      task.id!,
       'Task Due: ${task.name}',
       task.description,
       tz.TZDateTime.from(task.dueDate, tz.local),
@@ -110,10 +110,14 @@ class NotificationService {
 
   void _navigateToTask(int taskId) {
     final taskStore = GetIt.I<TaskStore>();
-    final task = taskStore.tasks.firstWhere((t) => t.id == taskId);
-    navigatorKey.currentState?.push(
-      MaterialPageRoute(builder: (_) => TaskDetailPage(task: task)),
-    );
+    taskStore.getTaskById(taskId).then((result) {
+      result.fold(
+        (failure) => null,
+        (task) => navigatorKey.currentState?.push(
+          MaterialPageRoute(builder: (_) => TaskDetailPage(task: task)),
+        ),
+      );
+    });
   }
 
   static final GlobalKey<NavigatorState> navigatorKey =

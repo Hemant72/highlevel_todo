@@ -93,7 +93,6 @@ class HomePage extends StatelessWidget {
             onPressed: () {
               if (formKey.currentState!.validate()) {
                 final newTask = Task(
-                  id: DateTime.now().millisecondsSinceEpoch,
                   name: nameController.text,
                   description: descriptionController.text,
                   dueDate: selectedDueDate!,

@@ -24,10 +24,12 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
-  Future<Either<Failure, void>> createTask(task.Task task) async {
+  Future<Either<Failure, task.Task>> createTask(task.Task task) async {
     try {
-      await localDataSource.cacheTask(TaskModel.fromEntity(task));
-      return const Right(null);
+      final taskModel = TaskModel.fromEntity(task);
+      final generatedId = await localDataSource.cacheTask(taskModel);
+      final createdTask = task.copyWith(id: generatedId);
+      return Right(createdTask);
     } on Exception {
       return Left(CacheError());
     }
@@ -48,6 +50,17 @@ class TaskRepositoryImpl implements TaskRepository {
     try {
       await localDataSource.updateTask(TaskModel.fromEntity(task));
       return const Right(null);
+    } on Exception {
+      return Left(CacheError());
+    }
+  }
+
+  @override
+  Future<Either<Failure, task.Task>> getTaskById(int id) async {
+    try {
+      final tasks = await localDataSource.getTasks();
+      final taskModel = tasks.firstWhere((model) => model.id == id, orElse: () => throw Exception('Task not found'));
+      return Right(taskModel.toEntity());
     } on Exception {
       return Left(CacheError());
     }

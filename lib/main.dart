@@ -4,13 +4,11 @@ import 'package:highlevel_todo/core/di/dependency_injection.dart';
 import 'package:highlevel_todo/core/service/notification_service.dart';
 import 'package:highlevel_todo/core/theme/app_theme.dart';
 import 'package:highlevel_todo/src/presentation/pages/home_page.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  configureDependencies();
-  await GetIt.I.allReady();
-  final notificationService = GetIt.I<NotificationService>();
-  await notificationService.initialize();
+  appConfig();
   runApp(const MyApp());
 }
 
@@ -22,7 +20,16 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'HighLevel Todo',
       theme: AppTheme.light(),
+      navigatorKey: NotificationService.navigatorKey,
       home: HomePage(),
     );
   }
+}
+
+void appConfig() async {
+  configureDependencies();
+  await GetIt.I.allReady();
+  tz.initializeTimeZones();
+  final notificationService = GetIt.I<NotificationService>();
+  await notificationService.initialize();
 }

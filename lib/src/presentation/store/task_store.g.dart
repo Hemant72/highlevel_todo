@@ -12,13 +12,13 @@ mixin _$TaskStore on _TaskStoreBase, Store {
   late final _$tasksAtom = Atom(name: '_TaskStoreBase.tasks', context: context);
 
   @override
-  ObservableList<Task> get tasks {
+  ObservableList<task.Task> get tasks {
     _$tasksAtom.reportRead();
     return super.tasks;
   }
 
   @override
-  set tasks(ObservableList<Task> value) {
+  set tasks(ObservableList<task.Task> value) {
     _$tasksAtom.reportWrite(value, super.tasks, () {
       super.tasks = value;
     });
@@ -32,11 +32,19 @@ mixin _$TaskStore on _TaskStoreBase, Store {
     return _$fetchTasksAsyncAction.run(() => super.fetchTasks());
   }
 
+  late final _$fetchTaskByIdAsyncAction =
+      AsyncAction('_TaskStoreBase.fetchTaskById', context: context);
+
+  @override
+  Future<Either<Failure, task.Task>> fetchTaskById(int id) {
+    return _$fetchTaskByIdAsyncAction.run(() => super.fetchTaskById(id));
+  }
+
   late final _$addTaskAsyncAction =
       AsyncAction('_TaskStoreBase.addTask', context: context);
 
   @override
-  Future<void> addTask(Task task) {
+  Future<void> addTask(task.Task task) {
     return _$addTaskAsyncAction.run(() => super.addTask(task));
   }
 
@@ -52,7 +60,7 @@ mixin _$TaskStore on _TaskStoreBase, Store {
       AsyncAction('_TaskStoreBase.completeTask', context: context);
 
   @override
-  Future<void> completeTask(Task task) {
+  Future<void> completeTask(task.Task task) {
     return _$completeTaskAsyncAction.run(() => super.completeTask(task));
   }
 
@@ -60,7 +68,7 @@ mixin _$TaskStore on _TaskStoreBase, Store {
       AsyncAction('_TaskStoreBase.postponeTask', context: context);
 
   @override
-  Future<void> postponeTask(Task task) {
+  Future<void> postponeTask(task.Task task) {
     return _$postponeTaskAsyncAction.run(() => super.postponeTask(task));
   }
 
@@ -76,7 +84,7 @@ mixin _$TaskStore on _TaskStoreBase, Store {
       AsyncAction('_TaskStoreBase.editTask', context: context);
 
   @override
-  Future<void> editTask(Task task) {
+  Future<void> editTask(task.Task task) {
     return _$editTaskAsyncAction.run(() => super.editTask(task));
   }
 

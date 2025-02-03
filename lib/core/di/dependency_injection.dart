@@ -12,6 +12,7 @@ import 'package:highlevel_todo/src/domain/repositories/task_repository.dart';
 import 'package:highlevel_todo/src/domain/usecases/create_task.dart';
 import 'package:highlevel_todo/src/domain/usecases/delet_task.dart';
 import 'package:highlevel_todo/src/domain/usecases/get_task.dart';
+import 'package:highlevel_todo/src/domain/usecases/get_task_by_id.dart';
 import 'package:highlevel_todo/src/domain/usecases/mark_task_complete.dart';
 import 'package:highlevel_todo/src/domain/usecases/snooze_task.dart';
 import 'package:highlevel_todo/src/domain/usecases/sort_task.dart';
@@ -40,6 +41,7 @@ void configureDependencies() {
   getIt.registerLazySingleton(() => CreateTask(getIt()));
   getIt.registerLazySingleton(() => DeleteTask(getIt()));
   getIt.registerLazySingleton(() => GetTasks(getIt()));
+  getIt.registerLazySingleton(() => GetTaskById(getIt()));
   getIt.registerLazySingleton(() => MarkTaskComplete(getIt()));
   getIt.registerLazySingleton(() => SnoozeTask(getIt()));
   getIt.registerLazySingleton(() => SortTasks(getIt()));
@@ -49,9 +51,11 @@ void configureDependencies() {
       () => NotificationService(getIt()));
 
   getIt.registerSingleton<TaskStore>(TaskStore(
+    notificationService: getIt(),
     createTask: getIt(),
     deleteTask: getIt(),
     getTasks: getIt(),
+    getTaskById: getIt(),
     markTaskComplete: getIt(),
     snoozeTask: getIt(),
     sortTasks: getIt(),

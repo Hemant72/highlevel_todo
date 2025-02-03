@@ -5,13 +5,13 @@ import 'package:highlevel_todo/src/domain/repositories/task_repository.dart';
 
 import '../entities/task.dart' as task;
 
-class CreateTask implements UseCase<task.Task, task.Task> {
+class GetTaskById implements UseCase<task.Task, int> {
   final TaskRepository repository;
 
-  CreateTask(this.repository);
+  GetTaskById(this.repository);
 
   @override
-  Future<Either<Failure, task.Task>> call(task.Task task) async {
-    return await repository.createTask(task);
+  Future<Either<Failure, task.Task>> call(int id) async {
+    return await repository.getTaskById(id);
   }
 }

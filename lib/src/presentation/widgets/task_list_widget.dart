@@ -19,7 +19,7 @@ class TaskList extends StatelessWidget {
           key: Key(_taskStore.tasks[index].id.toString()),
           background: Container(color: AppColors.error),
           confirmDismiss: (_) => _confirmDismiss(context),
-          onDismissed: (_) => _taskStore.removeTask(_taskStore.tasks[index].id),
+          onDismissed: (_) => _taskStore.removeTask(_taskStore.tasks[index].id!),
           child: TaskItem(
             task: _taskStore.tasks[index],
           ),

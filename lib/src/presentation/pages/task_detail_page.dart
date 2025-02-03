@@ -81,7 +81,7 @@ class TaskDetailPage extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              _taskStore.removeTask(task.id);
+              _taskStore.removeTask(task.id!);
               Navigator.pop(ctx);
               Navigator.pop(context);
             },

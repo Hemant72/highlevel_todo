@@ -1,14 +1,18 @@
+import 'package:fpdart/fpdart.dart';
+import 'package:highlevel_todo/core/error/failure.dart';
+import 'package:highlevel_todo/core/service/notification_service.dart';
 import 'package:highlevel_todo/core/usecases/usecase.dart';
 import 'package:highlevel_todo/src/domain/usecases/create_task.dart';
 import 'package:highlevel_todo/src/domain/usecases/delet_task.dart';
 import 'package:highlevel_todo/src/domain/usecases/get_task.dart';
+import 'package:highlevel_todo/src/domain/usecases/get_task_by_id.dart';
 import 'package:highlevel_todo/src/domain/usecases/mark_task_complete.dart';
 import 'package:highlevel_todo/src/domain/usecases/snooze_task.dart';
 import 'package:highlevel_todo/src/domain/usecases/sort_task.dart';
 import 'package:highlevel_todo/src/domain/usecases/update_task.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../domain/entities/task.dart';
+import '../../domain/entities/task.dart' as task;
 
 part 'task_store.g.dart';
 
@@ -16,9 +20,11 @@ part 'task_store.g.dart';
 class TaskStore = _TaskStoreBase with _$TaskStore;
 
 abstract class _TaskStoreBase with Store {
+  final NotificationService notificationService;
   final CreateTask createTask;
   final DeleteTask deleteTask;
   final GetTasks getTasks;
+  final GetTaskById getTaskById;
   final MarkTaskComplete markTaskComplete;
   final SnoozeTask snoozeTask;
   final SortTasks sortTasks;
@@ -28,14 +34,16 @@ abstract class _TaskStoreBase with Store {
     required this.createTask,
     required this.deleteTask,
     required this.getTasks,
+    required this.getTaskById,
     required this.markTaskComplete,
     required this.snoozeTask,
     required this.sortTasks,
     required this.updateTask,
+    required this.notificationService,
   });
 
   @observable
-  ObservableList<Task> tasks = ObservableList<Task>();
+  ObservableList<task.Task> tasks = ObservableList<task.Task>();
 
   @action
   Future<void> fetchTasks() async {
@@ -47,11 +55,19 @@ abstract class _TaskStoreBase with Store {
   }
 
   @action
-  Future<void> addTask(Task task) async {
+  Future<Either<Failure, task.Task>> fetchTaskById(int id) async {
+    return await getTaskById(id);
+  }
+
+  @action
+  Future<void> addTask(task.Task task) async {
     final result = await createTask(task);
     result.fold(
       (failure) => null,
-      (_) => tasks.add(task),
+      (createdTask) {
+        tasks.add(createdTask);
+        notificationService.scheduleTaskNotification(createdTask);
+      },
     );
   }
 
@@ -65,7 +81,7 @@ abstract class _TaskStoreBase with Store {
   }
 
   @action
-  Future<void> completeTask(Task task) async {
+  Future<void> completeTask(task.Task task) async {
     final result = await markTaskComplete(task);
     result.fold(
       (failure) => null,
@@ -74,7 +90,7 @@ abstract class _TaskStoreBase with Store {
   }
 
   @action
-  Future<void> postponeTask(Task task) async {
+  Future<void> postponeTask(task.Task task) async {
     final result = await snoozeTask(task);
     result.fold(
       (failure) => null,
@@ -92,7 +108,7 @@ abstract class _TaskStoreBase with Store {
   }
 
   @action
-  Future<void> editTask(Task task) async {
+  Future<void> editTask(task.Task task) async {
     final result = await updateTask(task);
     result.fold(
       (failure) => null,

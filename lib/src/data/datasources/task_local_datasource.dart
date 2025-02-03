@@ -5,7 +5,7 @@ import 'package:highlevel_todo/src/data/model/task_model.dart';
 part 'task_local_datasource.g.dart';
 
 abstract class TaskLocalDataSource {
-  Future<void> cacheTask(TaskModel task);
+  Future<int> cacheTask(TaskModel task);
   Future<List<TaskModel>> getTasks();
   Future<void> deleteTask(int id);
   Future<void> updateTask(TaskModel task);
@@ -14,13 +14,13 @@ abstract class TaskLocalDataSource {
 @DriftAccessor(tables: [Tasks])
 class TaskLocalDataSourceImpl extends DatabaseAccessor<AppDatabase>
     implements TaskLocalDataSource {
-  TaskLocalDataSourceImpl(AppDatabase db) : super(db);
+  TaskLocalDataSourceImpl(super.db);
 
   TableInfo<Tasks, Task> get tasks => db.tasks;
 
   @override
-  Future<void> cacheTask(TaskModel task) async {
-    await into(tasks).insert(
+  Future<int> cacheTask(TaskModel task) async {
+    return await into(tasks).insert(
       TasksCompanion(
         name: Value(task.name),
         description: Value(task.description),
@@ -28,7 +28,6 @@ class TaskLocalDataSourceImpl extends DatabaseAccessor<AppDatabase>
         tags: Value(task.tags),
         isCompleted: Value(task.isCompleted),
       ),
-      mode: InsertMode.insertOrReplace,
     );
   }
 
