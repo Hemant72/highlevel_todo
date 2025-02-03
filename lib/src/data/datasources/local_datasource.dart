@@ -20,6 +20,8 @@ class AppDatabase extends _$AppDatabase {
 }
 
 class CommaSeparatedListConverter extends TypeConverter<List<String>, String> {
+  const CommaSeparatedListConverter();
+
   @override
   List<String> fromSql(String fromDb) {
     return fromDb.split(',').map((tag) => tag.trim()).toList();
