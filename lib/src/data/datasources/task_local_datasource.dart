@@ -9,6 +9,7 @@ abstract class TaskLocalDataSource {
   Future<List<TaskModel>> getTasks();
   Future<void> deleteTask(int id);
   Future<void> updateTask(TaskModel task);
+  Future<TaskModel?> getTaskById(int id);
 }
 
 @DriftAccessor(tables: [Tasks])
@@ -62,5 +63,21 @@ class TaskLocalDataSourceImpl extends DatabaseAccessor<AppDatabase>
       tags: Value(task.tags),
       isCompleted: Value(task.isCompleted),
     ));
+  }
+
+  @override
+  Future<TaskModel?> getTaskById(int id) async {
+    final query = select(tasks)..where((tbl) => tbl.id.equals(id));
+    final row = await query.getSingleOrNull();
+    return row != null
+        ? TaskModel(
+            id: row.id,
+            name: row.name,
+            description: row.description,
+            dueDate: row.dueDate,
+            tags: row.tags,
+            isCompleted: row.isCompleted,
+          )
+        : null;
   }
 }

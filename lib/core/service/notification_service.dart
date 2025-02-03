@@ -29,7 +29,6 @@ class NotificationService {
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
-      // onDidReceiveLocalNotification: _onDidReceiveLocalNotification,
     );
 
     final InitializationSettings initializationSettings =
@@ -95,14 +94,6 @@ class NotificationService {
 
   void _onNotificationTap(NotificationResponse response) {
     final taskId = int.tryParse(response.payload ?? '');
-    if (taskId != null) {
-      _navigateToTask(taskId);
-    }
-  }
-
-  void _onDidReceiveLocalNotification(
-      int id, String? title, String? body, String? payload) {
-    final taskId = int.tryParse(payload ?? '');
     if (taskId != null) {
       _navigateToTask(taskId);
     }

@@ -85,7 +85,13 @@ abstract class _TaskStoreBase with Store {
     final result = await markTaskComplete(task);
     result.fold(
       (failure) => null,
-      (_) => tasks.remove(task),
+      (_) {
+        final index = tasks.indexWhere((t) => t.id == task.id);
+        if (index != -1) {
+          tasks[index] = task.copyWith(isCompleted: true);
+          tasks = ObservableList.of(tasks);
+        }
+      },
     );
   }
 

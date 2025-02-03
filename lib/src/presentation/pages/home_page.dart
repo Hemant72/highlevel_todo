@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:highlevel_todo/src/presentation/store/task_store.dart';
 import 'package:highlevel_todo/src/presentation/widgets/task_list_widget.dart';
+import 'package:intl/intl.dart';
 
 import '../../domain/entities/task.dart';
 
@@ -49,13 +50,12 @@ class HomePage extends StatelessWidget {
                 TextFormField(
                   controller: descriptionController,
                   decoration: InputDecoration(labelText: 'Description'),
-                  maxLines: 2,
                   validator: (value) =>
                       value?.isEmpty ?? true ? 'Description is required' : null,
                 ),
                 TextFormField(
                   controller: dueDateController,
-                  decoration: InputDecoration(labelText: 'Due Date'),
+                  decoration: InputDecoration(labelText: 'Due Date & Time'),
                   readOnly: true,
                   onTap: () async {
                     final selectedDate = await showDatePicker(
@@ -65,13 +65,28 @@ class HomePage extends StatelessWidget {
                       lastDate: DateTime.now().add(Duration(days: 365)),
                     );
                     if (selectedDate != null) {
-                      selectedDueDate = selectedDate;
-                      dueDateController.text =
-                          selectedDate.toLocal().toString().split(' ')[0];
+                      final selectedTime = await showTimePicker(
+                        // ignore: use_build_context_synchronously
+                        context: context,
+                        initialTime: TimeOfDay.now(),
+                      );
+                      if (selectedTime != null) {
+                        final combinedDateTime = DateTime(
+                          selectedDate.year,
+                          selectedDate.month,
+                          selectedDate.day,
+                          selectedTime.hour,
+                          selectedTime.minute,
+                        );
+                        selectedDueDate = combinedDateTime;
+                        dueDateController.text = DateFormat('yyyy-MM-dd HH:mm')
+                            .format(combinedDateTime);
+                      }
                     }
                   },
-                  validator: (value) =>
-                      value?.isEmpty ?? true ? 'Due Date is required' : null,
+                  validator: (value) => value?.isEmpty ?? true
+                      ? 'Due Date & Time are required'
+                      : null,
                 ),
                 TextFormField(
                   controller: tagsController,

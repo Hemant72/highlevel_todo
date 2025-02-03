@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:highlevel_todo/src/presentation/store/task_store.dart';
+import 'package:intl/intl.dart';
 
 import '../../domain/entities/task.dart';
 
 class TaskDetailPage extends StatelessWidget {
   final Task task;
   final TaskStore _taskStore = GetIt.I<TaskStore>();
+  final DateFormat _dateFormat = DateFormat('yyyy-MM-dd HH:mm');
 
   TaskDetailPage({super.key, required this.task});
 
@@ -28,7 +30,7 @@ class TaskDetailPage extends StatelessWidget {
           SizedBox(height: 8),
           Text(task.description),
           SizedBox(height: 8),
-          Text('Due: ${task.dueDate.toString()}'),
+          Text('Due: ${_dateFormat.format(task.dueDate)}'),
           SizedBox(height: 8),
           Wrap(
             spacing: 8.0,
