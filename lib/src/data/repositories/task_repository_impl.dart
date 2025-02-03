@@ -17,7 +17,7 @@ class TaskRepositoryImpl implements TaskRepository {
   Future<Either<Failure, List<task.Task>>> getTasks() async {
     try {
       final tasks = await localDataSource.getTasks();
-      return Right([]);
+      return Right(tasks.map((model) => model.toEntity()).toList());
     } on Exception {
       return Left(CacheError());
     }
@@ -26,9 +26,8 @@ class TaskRepositoryImpl implements TaskRepository {
   @override
   Future<Either<Failure, void>> createTask(task.Task task) async {
     try {
-      await localDataSource
-          .cacheTask(TaskModel.fromJson(task as Map<String, dynamic>));
-      return Right(null);
+      await localDataSource.cacheTask(TaskModel.fromEntity(task));
+      return const Right(null);
     } on Exception {
       return Left(CacheError());
     }
@@ -47,9 +46,8 @@ class TaskRepositoryImpl implements TaskRepository {
   @override
   Future<Either<Failure, void>> updateTask(task.Task task) async {
     try {
-      await localDataSource
-          .updateTask(TaskModel.fromJson(task as Map<String, dynamic>));
-      return Right(null);
+      await localDataSource.updateTask(TaskModel.fromEntity(task));
+      return const Right(null);
     } on Exception {
       return Left(CacheError());
     }

@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../domain/entities/task.dart' as task;
+
 part 'task_model.freezed.dart';
 part 'task_model.g.dart';
 
@@ -16,4 +18,26 @@ abstract class TaskModel with _$TaskModel {
 
   factory TaskModel.fromJson(Map<String, dynamic> json) =>
       _$TaskModelFromJson(json);
+
+  task.Task toEntity() {
+    return task.Task(
+      id: id,
+      name: name,
+      description: description,
+      dueDate: dueDate,
+      tags: tags,
+      isCompleted: isCompleted,
+    );
+  }
+
+  factory TaskModel.fromEntity(task.Task task) {
+    return TaskModel(
+      id: task.id,
+      name: task.name,
+      description: task.description,
+      dueDate: task.dueDate,
+      tags: task.tags,
+      isCompleted: task.isCompleted,
+    );
+  }
 }
