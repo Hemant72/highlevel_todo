@@ -25,25 +25,29 @@ class TaskList extends StatelessWidget {
       final upcomingTasks =
           taskStore.tasks.where((t) => !t.dueDate.isBefore(now)).toList();
 
-      if (taskStore.isLoading) {
-        return const Center(child: CircularProgressIndicator());
-      }
-      if (taskStore.errorMessage != null) {
-        return _buildErrorState(taskStore.errorMessage!);
-      }
-
-      if (taskStore.tasks.isEmpty) {
-        return _buildEmptyState();
-      }
-
       return CustomScrollView(
         controller: scrollController,
         slivers: [
-          if (overdueTasks.isNotEmpty) _buildSectionHeader('Overdue Tasks'),
-          _buildTaskList(overdueTasks),
-          if (upcomingTasks.isNotEmpty) _buildSectionHeader('Upcoming Tasks'),
-          _buildTaskList(upcomingTasks),
-          const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
+          if (taskStore.isLoading)
+            const SliverFillRemaining(
+              child: Center(child: CircularProgressIndicator()),
+            )
+          else if (taskStore.errorMessage != null)
+            SliverFillRemaining(
+              child: _buildErrorState(taskStore.errorMessage!),
+            )
+          else if (taskStore.tasks.isEmpty)
+            SliverFillRemaining(
+              child: _buildEmptyState(),
+            )
+          else ...[
+            if (overdueTasks.isNotEmpty) _buildSectionHeader('Overdue Tasks'),
+            _buildTaskList(overdueTasks),
+            if (upcomingTasks.isNotEmpty)
+              _buildSectionHeader('Upcoming Tasks'),
+            _buildTaskList(upcomingTasks),
+            const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
+          ],
         ],
       );
     });

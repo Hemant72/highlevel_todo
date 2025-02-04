@@ -32,5 +32,7 @@ void config() async {
   await GetIt.I.allReady();
   tz.initializeTimeZones();
   final notificationService = GetIt.I<NotificationService>();
-  await notificationService.initialize();
+  await notificationService.initialize().catchError((error) {
+    debugPrint('Failed to initialize notifications: $error');
+  });
 }
