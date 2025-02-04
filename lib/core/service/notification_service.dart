@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get_it/get_it.dart';
 import 'package:highlevel_todo/src/presentation/pages/task_detail_page.dart';
 import 'package:highlevel_todo/src/presentation/store/task_store.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 import '../../src/domain/entities/task.dart';
@@ -16,11 +18,14 @@ class NotificationService {
     playSound: true,
   );
 
-  NotificationService(this.flutterLocalNotificationsPlugin) {
-    initialize();
-  }
+  NotificationService(this.flutterLocalNotificationsPlugin);
 
   Future<void> initialize() async {
+    final status = await Permission.notification.request();
+    if (!status.isGranted) {
+      debugPrint('Notification permission denied');
+    }
+
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -75,17 +80,36 @@ class NotificationService {
       iOS: const DarwinNotificationDetails(),
     );
 
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      task.id!,
-      'Task Due: ${task.name}',
-      task.description,
-      tz.TZDateTime.from(task.dueDate, tz.local),
-      notificationDetails,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-      payload: task.id.toString(),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-    );
+    try {
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        task.id!,
+        'Task Due: ${task.name}',
+        task.description,
+        tz.TZDateTime.from(task.dueDate, tz.local),
+        notificationDetails,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        payload: task.id.toString(),
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      );
+    } on PlatformException catch (e) {
+      debugPrint('Error scheduling notification: ${e.message}');
+      if (e.code == 'exact_alarms_not_permitted') {
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+          task.id!,
+          'Task Due: ${task.name}',
+          task.description,
+          tz.TZDateTime.from(task.dueDate, tz.local),
+          notificationDetails,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
+          payload: task.id.toString(),
+          androidScheduleMode: AndroidScheduleMode.inexact,
+        );
+      } else {
+        rethrow;
+      }
+    }
   }
 
   Future<void> cancelNotification(int taskId) async {

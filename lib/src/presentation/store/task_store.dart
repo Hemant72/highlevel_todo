@@ -45,13 +45,27 @@ abstract class _TaskStoreBase with Store {
   @observable
   ObservableList<task.Task> tasks = ObservableList<task.Task>();
 
+  @observable
+  bool isLoading = false;
+
+  @observable
+  String? errorMessage;
+
   @action
   Future<void> fetchTasks() async {
-    final result = await getTasks(NoParams());
-    result.fold(
-      (failure) => null,
-      (tasks) => this.tasks = ObservableList.of(tasks),
-    );
+    try {
+      isLoading = true;
+      errorMessage = null;
+      final result = await getTasks(NoParams());
+      result.fold(
+        (failure) => null,
+        (tasks) => this.tasks = ObservableList.of(tasks),
+      );
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
   }
 
   @action

@@ -8,7 +8,7 @@ import 'package:timezone/data/latest.dart' as tz;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  appConfig();
+  config();
   runApp(const MyApp());
 }
 
@@ -20,13 +20,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'HighLevel Todo',
       theme: AppTheme.light(),
+      debugShowCheckedModeBanner: false,
       navigatorKey: NotificationService.navigatorKey,
       home: HomePage(),
     );
   }
 }
 
-void appConfig() async {
+void config() async {
   configureDependencies();
   await GetIt.I.allReady();
   tz.initializeTimeZones();

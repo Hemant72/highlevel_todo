@@ -21,7 +21,7 @@ abstract class TaskModel with _$TaskModel {
 
   factory TaskModel.fromEntity(task.Task task) {
     return TaskModel(
-      id: task.id!,
+      id: task.id ?? 0,
       name: task.name,
       description: task.description,
       dueDate: task.dueDate,

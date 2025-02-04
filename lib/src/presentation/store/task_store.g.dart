@@ -24,6 +24,38 @@ mixin _$TaskStore on _TaskStoreBase, Store {
     });
   }
 
+  late final _$isLoadingAtom =
+      Atom(name: '_TaskStoreBase.isLoading', context: context);
+
+  @override
+  bool get isLoading {
+    _$isLoadingAtom.reportRead();
+    return super.isLoading;
+  }
+
+  @override
+  set isLoading(bool value) {
+    _$isLoadingAtom.reportWrite(value, super.isLoading, () {
+      super.isLoading = value;
+    });
+  }
+
+  late final _$errorMessageAtom =
+      Atom(name: '_TaskStoreBase.errorMessage', context: context);
+
+  @override
+  String? get errorMessage {
+    _$errorMessageAtom.reportRead();
+    return super.errorMessage;
+  }
+
+  @override
+  set errorMessage(String? value) {
+    _$errorMessageAtom.reportWrite(value, super.errorMessage, () {
+      super.errorMessage = value;
+    });
+  }
+
   late final _$fetchTasksAsyncAction =
       AsyncAction('_TaskStoreBase.fetchTasks', context: context);
 
@@ -91,7 +123,9 @@ mixin _$TaskStore on _TaskStoreBase, Store {
   @override
   String toString() {
     return '''
-tasks: ${tasks}
+tasks: ${tasks},
+isLoading: ${isLoading},
+errorMessage: ${errorMessage}
     ''';
   }
 }
